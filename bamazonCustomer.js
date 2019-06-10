@@ -12,11 +12,21 @@ var connection = mysql.createConnection({
   
     // Your password
     password: "MySQL222915",
-    database: "greatbay"
+    database: "bamazon"
   });
 
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as ID: " + connection.threadId +"\n");
-    inquire();
+    showProducts();
 })
+
+function showProducts() {
+    console.log("Available Products:")
+    connection.query("SELECT * FROM products", function(err, res) {
+        if (err) throw err;
+        //showing results from SELECT statement...
+        console.log(res);
+        connection.end();
+    })
+}
