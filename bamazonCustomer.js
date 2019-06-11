@@ -3,14 +3,11 @@ var mysql = require("mysql");
 
 //connection to mysql database
 var connection = mysql.createConnection({
-    host: "localhost",
-  
+    host: "localhost", 
     // Your port; if not 3306
     port: 3306,
-  
     // Your username
     user: "root",
-  
     // Your password
     password: "MySQL222915",
     database: "bamazon"
@@ -36,7 +33,6 @@ function showProducts() {
 
 //inquirer to start customer purchasing questions
 function inquire() {
-    console.log("-----INQUIRER-----")
     inquirer.prompt([
         {
             type: "input",
@@ -48,24 +44,28 @@ function inquire() {
             type: "input",
             message: "How many items would you like to purchase?",
             name: "itemQuantity"
-        }
+        },
     ]).then(function(user) {
             console.log("You are looking for: " + user.itemQuantity);
             var idBuy = user.idPurchase;
             var itemCount = user.itemQuantity;
-            makePurchase(idBuy, itemCount);
+            checkPurchase(idBuy, itemCount);
         })
     };
 
 //function to take in user input and make purchase
-    function makePurchase(idBuy, itemCount) {
+    //need to continue to complete purchase by totaling customer's purchase request.
+    function checkPurchase(idBuy, itemCount) {
         connection.query("SELECT * FROM products WHERE item_id = " + idBuy, function(err, res) {
-            if (itemCount <= res[0].stock_quantity) {
+            if (err) throw err;
+            else if (itemCount <= res[0].stock_quantity) {
                 console.log("Item in stock!");
                 connection.query("UPDATE products SET stock_quantity = stock_quantity-" + itemCount + " WHERE item_id = " + idBuy);
             } else {
                 console.log("Product out of stock! Please pick another product!");
+                inquire();
             }
             connection.end();
         })
     }
+
