@@ -1,6 +1,7 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 
+//connection to mysql database
 var connection = mysql.createConnection({
     host: "localhost",
   
@@ -15,12 +16,14 @@ var connection = mysql.createConnection({
     database: "bamazon"
   });
 
+//connection error query
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as ID: " + connection.threadId +"\n");
     showProducts();
 })
 
+//show products upon app load
 function showProducts() {
     console.log("Available Products:")
     connection.query("SELECT * FROM products", function(err, res) {
@@ -31,10 +34,10 @@ function showProducts() {
     })
 }
 
+//inquirer to start customer purchasing questions
 function inquire() {
     console.log("-----INQUIRER-----")
     inquirer.prompt([
-
         {
             type: "input",
             message: "Please select the ID of the product you wish to purchase.",
@@ -54,13 +57,15 @@ function inquire() {
         })
     };
 
+//function to take in user input and make purchase
     function makePurchase(idBuy, itemCount) {
         connection.query("SELECT * FROM products WHERE item_id = " + idBuy, function(err, res) {
-            if (itemCount <= res[0].stock_quantity){
-                console.log("You can make the purchase!")
+            if (itemCount <= res[0].stock_quantity) {
+                console.log("Item in stock!");
+                connection.query("UPDATE products SET stock_quantity = stock_quantity-" + itemCount + " WHERE item_id = " + idBuy);
             } else {
                 console.log("Product out of stock! Please pick another product!");
             }
-            showProducts();
+            connection.end();
         })
     }
