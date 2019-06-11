@@ -38,14 +38,29 @@ function inquire() {
         {
             type: "input",
             message: "Please select the ID of the product you wish to purchase.",
-            name: "idpurchase"
+            name: "idPurchase"
         },
 
         {
             type: "input",
             message: "How many items would you like to purchase?",
-            name: "itemquantity"
+            name: "itemQuantity"
         }
-    ])
-    connection.end();
-}
+    ]).then(function(user) {
+            console.log("You are looking for: " + user.itemQuantity);
+            var idBuy = user.idPurchase;
+            var itemCount = user.itemQuantity;
+            makePurchase(idBuy, itemCount);
+        })
+    };
+
+    function makePurchase(idBuy, itemCount) {
+        connection.query("SELECT * FROM products WHERE item_id = " + idBuy, function(err, res) {
+            if (itemCount <= res[0].stock_quantity){
+                console.log("You can make the purchase!")
+            } else {
+                console.log("Product out of stock! Please pick another product!");
+            }
+            showProducts();
+        })
+    }
