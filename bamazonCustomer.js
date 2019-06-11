@@ -49,23 +49,27 @@ function inquire() {
             console.log("You are looking for: " + user.itemQuantity);
             var idBuy = user.idPurchase;
             var itemCount = user.itemQuantity;
-            checkPurchase(idBuy, itemCount);
+            makePurchase(idBuy, itemCount);
         })
     };
 
-//function to take in user input and make purchase
+//function to take in user input and check purchase
     //need to continue to complete purchase by totaling customer's purchase request.
-    function checkPurchase(idBuy, itemCount) {
-        connection.query("SELECT * FROM products WHERE item_id = " + idBuy, function(err, res) {
-            if (err) throw err;
-            else if (itemCount <= res[0].stock_quantity) {
-                console.log("Item in stock!");
-                connection.query("UPDATE products SET stock_quantity = stock_quantity-" + itemCount + " WHERE item_id = " + idBuy);
-            } else {
-                console.log("Product out of stock! Please pick another product!");
-                inquire();
-            }
-            connection.end();
-        })
-    }
+function makePurchase(idBuy, itemCount) {
+    connection.query("SELECT * FROM products WHERE item_id = " + idBuy, function(err, res) {
+        if (err) throw err;
+        else if (itemCount <= res[0].stock_quantity) {
+            var makePurchase = itemCount*res[0].price;
+            console.log("Your final cost is: $" + makePurchase);
+            
+            connection.query("UPDATE products SET stock_quantity = stock_quantity-" + itemCount + " WHERE item_id = " + idBuy);
+            
+        } else {
+            console.log("Product out of stock! Please pick another product!");
+            inquire();
+        }
+        connection.end();
+    })
+}
+
 
