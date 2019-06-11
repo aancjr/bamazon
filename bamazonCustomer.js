@@ -27,6 +27,25 @@ function showProducts() {
         if (err) throw err;
         //showing results from SELECT statement...
         console.log(res);
-        connection.end();
+        inquire();
     })
+}
+
+function inquire() {
+    console.log("-----INQUIRER-----")
+    inquirer.prompt([
+
+        {
+            type: "input",
+            message: "Please select the ID of the product you wish to purchase.",
+            name: "idpurchase"
+        },
+
+        {
+            type: "input",
+            message: "How many items would you like to purchase?",
+            name: "itemquantity"
+        }
+    ])
+    connection.end();
 }
