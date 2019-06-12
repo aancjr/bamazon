@@ -68,7 +68,24 @@ function makePurchase(idBuy, itemCount) {
             console.log("Product out of stock! Please pick another product!");
             inquire();
         }
-        connection.end();
+        whatNext();
+    })
+}
+
+function whatNext () {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "What would you like to do next?",
+            choices: ["Make another purchase", "Leave store"],
+            name: "next"
+        }
+    ]).then(function(user) {
+        if (user.next === "Make another purchase") {
+            showProducts();
+        } else {
+            connection.end();
+        }
     })
 }
 
