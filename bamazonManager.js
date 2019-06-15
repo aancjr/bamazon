@@ -47,7 +47,7 @@ function inquire() {
                 return lowInv();
 
             case "Add to Inventory":
-                return ;
+                return addToTable();
 
             case "Add New Product":
                 return ;
@@ -103,6 +103,47 @@ function lowInv() {
         console.log(table.toString());
         inquire();
     } )
+}
+
+function addToTable() {
+    connection.query("SELECT * FROM products", function(err, res) {
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+            var tableId = res[i].item_id;
+            var productName = res[i].product_name;
+            var deptName = res[i].department_name;
+            var price = res[i].price;
+            var stockQuan = res[i].stock_quantity;
+            
+            table.push([tableId, productName, deptName, price, stockQuan]
+    ); 
+        }
+        console.log(table.toString());
+        addInv();
+    });
+}
+
+//.catch() error after the number of inventory is to be added.
+function addInv() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the ID of the item you'd like to add inventory too?",
+            name: "invID"
+        },
+
+        {
+            type: "input",
+            message: "How many items are you adding?",
+            name: "addInv"
+        }
+    ]).then(function(user) {
+        // if (err) throw err;
+        connection.query("UPDATE products SET stock_quantity = " + user.addInv + " WHERE item_id = " + user.invID)
+        console.log("Product Inventory Updated!")
+        inquire();
+    })
+    connection.end();
 }
 
 
