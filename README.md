@@ -9,7 +9,7 @@ An Amazon-like simulated storefront utilizing the command line to interact with 
 - Must be run in command line.
 - Data is created and stored in MySQL.
 - Image of purchase:
-    ![image](assets/images/screenshot "bamazonCust Screenshot")
+    ![image](assets/images/screenshot.png "bamazonCust Screenshot")
 
 ## Languages and Packages Used:
 
