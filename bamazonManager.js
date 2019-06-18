@@ -4,7 +4,7 @@ var cliTable = require("cli-table3");
 //variable to create the table using cliTable
 var table = new cliTable({
     head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
-    colWidths: [20, 20, 20, 20, 20]
+    colWidths: [10, 45, 18, 10, 18]
 });
 
 //connection to mysql database

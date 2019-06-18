@@ -40,12 +40,12 @@ function showProducts() {
             var stockQuan = res[i].stock_quantity;
             
             table.push([tableId, productName, deptName, price, stockQuan]
-    ); 
-        }
-        console.log(table.toString());
-        tableId, productName, deptName, price, stockQuan = [];
-        inquire();
-    });
+                ); 
+            }
+            console.log(table.toString());
+            inquire();
+            // table.toString() = null;
+        });
 }
 
 //inquirer to start customer purchasing questions
