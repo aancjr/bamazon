@@ -4,7 +4,7 @@ var cliTable = require("cli-table3");
 //variable to create the table using cliTable
 var table = new cliTable({
     head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
-    colWidths: [20, 20, 20, 20, 20]
+    colWidths: [10, 45, 18, 10, 18]
 });
 
 //connection to mysql database
@@ -24,11 +24,11 @@ connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as ID: " + connection.threadId +"\n");
 
-    createTable();
+    showProducts();
 })
 
 //function to create a table out of the data in mySQL
-function createTable() {
+function showProducts() {
     console.log("Available products: ")
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
@@ -43,6 +43,7 @@ function createTable() {
     ); 
         }
         console.log(table.toString());
+        tableId, productName, deptName, price, stockQuan = [];
         inquire();
     });
 }
@@ -53,7 +54,7 @@ function inquire() {
         {
             type: "input",
             message: "Please select the ID of the product you wish to purchase.",
-            name: "idPurchase"
+            name: "idPurchase",
         },
 
         {
@@ -72,15 +73,17 @@ function inquire() {
     //need to continue to complete purchase by totaling customer's purchase request.
 function makePurchase(idBuy, itemCount) {
     connection.query("SELECT * FROM products WHERE item_id = " + idBuy, function(err, res) {
+        var stockCheck = res[0].stock_quantity
         if (err) throw err;
-        else if (itemCount <= res[0].stock_quantity) {
+        else if (itemCount <= stockCheck) {
             var makePurchase = itemCount*res[0].price;
             console.log("-------------------");
             console.log("Your final cost is: $" + makePurchase);
+            console.log("Thank you for your purchase!")
             
             connection.query("UPDATE products SET stock_quantity = stock_quantity-" + itemCount + " WHERE item_id = " + idBuy);
             
-        } else {
+        } else if (itemCount > stockCheck) {
             console.log("-------------------");
             console.log("Product out of stock! Please pick another product!");
             inquire();
@@ -105,6 +108,7 @@ function whatNext () {
             showProducts();
         } else {
             console.log("\n");
+            console.log("Thank you for Shopping at bamazon!")
             connection.end();
         }
     })
