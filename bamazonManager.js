@@ -116,7 +116,7 @@ function addInv() {
             name: "addInv"
         }
     ]).then(function(user) {
-            connection.query("UPDATE products SET stock_quantity = " + user.addInv + " WHERE item_id = " + user.invID)
+            connection.query(`UPDATE products SET stock_quantity = stock_quantity + ${user.addInv} WHERE item_id = ${user.invID}`)
             console.log("Product Inventory Updated!")
             console.log("\n");
             inquire();
