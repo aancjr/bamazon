@@ -2,20 +2,8 @@ var inquirer = require("inquirer");
 var mysql = require("mysql");
 var cliTable = require("cli-table3");
 
-//connection to mysql database
-// var connection = mysql.createConnection({
-//     host: "localhost", 
-//     // Your port; if not 3306
-//     port: 3306,
-//     // Your username
-//     user: "root",
-//     // Your password
-//     password: "MySQL222915",
-//     database: "bamazon"
-//   });
-
-  var pool = mysql.createPool({
-    connectionLimit: 1,
+// connection to mysql database
+var connection = mysql.createConnection({
     host: "localhost", 
     // Your port; if not 3306
     port: 3306,
@@ -25,14 +13,6 @@ var cliTable = require("cli-table3");
     password: "MySQL222915",
     database: "bamazon"
   });
-
-//connection error query
-// function start () {connection.connect(function(err) {
-//     if (err) throw err;
-//     console.log("Connected as ID: " + connection.threadId +"\n");
-
-//     // inquire();
-// })}
 
 inquire();
 
@@ -59,17 +39,17 @@ function inquire() {
                 return addInv();
 
             case "Add New Product":
-                return ;
+                return newItem();
             
             case "Leave Store":
                 console.log("See you next time!")
                 console.log("\n")
-                return pool.end();
+                return connection.end();
 
             default:
                 console.log("There seems to be an issue, try again.")
                 console.log("\n")
-                return pool.end();
+                return connection.end();
         }
         })
     };
@@ -77,8 +57,6 @@ function inquire() {
 //function to create a table out of the data in mySQL
 function createTable() {
     console.log("Available products: ")
-    pool.getConnection(function(err, connection) {
-        if (err) throw err;
         connection.query("SELECT * FROM products", function(err, res) {
             if (err) throw err;
             var table = new cliTable({
@@ -98,15 +76,10 @@ function createTable() {
             console.log(table.toString());
             inquire();
             })
-        connection.release();
-    });
 }
 
 function lowInv() {
     console.log("Low Inventory: ")
-    pool.getConnection(function(err, connection) {
-        if (err) throw err;
-
     connection.query("SELECT * FROM products WHERE stock_quantity < 10", function(err, res) {
         if (err) throw err;
         var table = new cliTable({
@@ -124,11 +97,9 @@ function lowInv() {
             table.push([tableId, productName, deptName, price, stockQuan]
             ); 
         }   
-        connection.release();
         console.log(table.toString());
         inquire();
         })
-    })
 }
 
 function addInv() {
@@ -145,36 +116,43 @@ function addInv() {
             name: "addInv"
         }
     ]).then(function(user) {
-        pool.getConnection(function(err, connection){
-            if (err) throw err;
-
             connection.query("UPDATE products SET stock_quantity = " + user.addInv + " WHERE item_id = " + user.invID)
             console.log("Product Inventory Updated!")
+            console.log("\n");
             inquire();
         })
-    })
 }
 
 
-function addToTable() {
-    pool.getConnection("SELECT * FROM products", function(err, res) {
-        if (err) throw err;
-        var table = new cliTable({
-            head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
-            colWidths: [10, 45, 18, 10, 18]
-        });        
-        for (var i = 0; i < res.length; i++) {
-            var tableId = res[i].item_id;
-            var productName = res[i].product_name;
-            var deptName = res[i].department_name;
-            var price = res[i].price;
-            var stockQuan = res[i].stock_quantity;
-            
-            table.push([tableId, productName, deptName, price, stockQuan]
-    ); 
+function newItem() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the product you would like to add?",
+            name: "newName"
+        },
+        {
+            type: "input",
+            message: "What department can the item be found in?",
+            name: "newDept"
+        },
+        {
+            type: "input",
+            message: "How much does each item cost?",
+            name: "newPrice"
+        },
+        {
+            type: "input",
+            message: "How many items are we adding?",
+            name: "newStock"
         }
-        console.log(table.toString());
-    });
+    ]).then(function(user) {
+        connection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ("${user.newName}", "${user.newDept}", ${user.newPrice}, ${user.newStock})`);
+        console.log("------------------");
+        console.log("New product added!");
+        console.log("\n");
+        inquire();
+    })
 }
 
 
