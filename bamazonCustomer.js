@@ -1,11 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var cliTable = require("cli-table3");
-//variable to create the table using cliTable
-var table = new cliTable({
-    head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
-    colWidths: [10, 45, 18, 10, 18]
-});
 
 //connection to mysql database
 var connection = mysql.createConnection({
@@ -32,6 +27,10 @@ function showProducts() {
     console.log("Available products: ")
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
+        var table = new cliTable({
+            head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
+            colWidths: [10, 45, 18, 10, 18]
+        });
         for (var i = 0; i < res.length; i++) {
             var tableId = res[i].item_id;
             var productName = res[i].product_name;

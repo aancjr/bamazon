@@ -1,11 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var cliTable = require("cli-table3");
-//variable to create the table using cliTable
-var table = new cliTable({
-    head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
-    colWidths: [10, 45, 18, 10, 18]
-});
 
 //connection to mysql database
 // var connection = mysql.createConnection({
@@ -61,7 +56,7 @@ function inquire() {
                 return lowInv();
 
             case "Add to Inventory":
-                return addToTable();
+                return addInv();
 
             case "Add New Product":
                 return ;
@@ -86,6 +81,10 @@ function createTable() {
         if (err) throw err;
         connection.query("SELECT * FROM products", function(err, res) {
             if (err) throw err;
+            var table = new cliTable({
+                head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
+                colWidths: [10, 45, 18, 10, 18]
+            });            
             for (var i = 0; i < res.length; i++) {
                 var tableId = res[i].item_id;
                 var productName = res[i].product_name;
@@ -110,6 +109,11 @@ function lowInv() {
 
     connection.query("SELECT * FROM products WHERE stock_quantity < 10", function(err, res) {
         if (err) throw err;
+        var table = new cliTable({
+            head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
+            colWidths: [10, 45, 18, 10, 18]
+        });
+        
         for (var i = 0; i < res.length; i++) {
             var tableId = res[i].item_id;
             var productName = res[i].product_name;
@@ -127,25 +131,6 @@ function lowInv() {
     })
 }
 
-function addToTable() {
-    connection.query("SELECT * FROM products", function(err, res) {
-        if (err) throw err;
-        for (var i = 0; i < res.length; i++) {
-            var tableId = res[i].item_id;
-            var productName = res[i].product_name;
-            var deptName = res[i].department_name;
-            var price = res[i].price;
-            var stockQuan = res[i].stock_quantity;
-            
-            table.push([tableId, productName, deptName, price, stockQuan]
-    ); 
-        }
-        console.log(table.toString());
-        addInv();
-    });
-}
-
-//.catch() error after the number of inventory is to be added.
 function addInv() {
     inquirer.prompt([
         {
@@ -160,12 +145,37 @@ function addInv() {
             name: "addInv"
         }
     ]).then(function(user) {
-        // if (err) throw err;
-        connection.query("UPDATE products SET stock_quantity = " + user.addInv + " WHERE item_id = " + user.invID)
-        console.log("Product Inventory Updated!")
-        inquire();
+        pool.getConnection(function(err, connection){
+            if (err) throw err;
+
+            connection.query("UPDATE products SET stock_quantity = " + user.addInv + " WHERE item_id = " + user.invID)
+            console.log("Product Inventory Updated!")
+            inquire();
+        })
     })
-    connection.end();
 }
+
+
+function addToTable() {
+    pool.getConnection("SELECT * FROM products", function(err, res) {
+        if (err) throw err;
+        var table = new cliTable({
+            head: ["item_id", "product_name", "department_name", "price", "stock_quantity"],
+            colWidths: [10, 45, 18, 10, 18]
+        });        
+        for (var i = 0; i < res.length; i++) {
+            var tableId = res[i].item_id;
+            var productName = res[i].product_name;
+            var deptName = res[i].department_name;
+            var price = res[i].price;
+            var stockQuan = res[i].stock_quantity;
+            
+            table.push([tableId, productName, deptName, price, stockQuan]
+    ); 
+        }
+        console.log(table.toString());
+    });
+}
+
 
 
