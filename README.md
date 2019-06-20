@@ -2,17 +2,26 @@
 
 ## Overview
 
-An Amazon-like simulated storefront utilizing the command line to interact with the customer (user). bamazon will take in the users request to make a purchase and provide the customer with a final price. The database will then actively update and prompt the user to leave the store or make another purchase.
+An Amazon-like simulated storefront utilizing the command line to interact with the customer (user) or manager (2 different file/apps). bamazon will take in the customers request to make a purchase and provide the customer with a final price. The database will then actively update and prompt the user to leave the store or make another purchase.
+
+The manager app will ask the manager to view products, view low inventory, add inventory to any current products and add a new product. Manager can go back and forth between options based on what they'd like to do. The manager will also be prompted to close the application when they are done.
 
 ## Details:
 
 - Must be run in command line.
 - Data is created and stored in MySQL.
-- Image of purchase:
+- GIFs of Customer and Manager apps:
 
-    ![image](assets/images/screenshot1.png "bamazonCust Screenshot")
+    Customer:
+    
+    ![image](assets/images/customer.gif "bamazonCust GIF")
 
-    ![image](assets/images/screenshot2.png "bamazonCust Final Screenshot")
+    Manager:
+
+    ![image](assets/images/manager.gif "bamazonCust view/lowinv/addinv")
+
+
+    ![image](assets/images/manager2.gif "bamazonCust additem/leavestore")
 
 ## Languages and Packages Used:
 

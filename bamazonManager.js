@@ -41,7 +41,7 @@ function inquire() {
             case "Add New Product":
                 return newItem();
             
-            case "Leave Store":
+            case "Close Program":
                 console.log("See you next time!")
                 console.log("\n")
                 return connection.end();
